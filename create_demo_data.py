@@ -40,16 +40,16 @@ Lesson.objects.get_or_create(course=course, order=1, defaults={
     'content': 'Models store data; views handle requests and return responses.'
 })
 question, _ = Question.objects.get_or_create(
-    course=course, content='Is Django a Python web framework?', defaults={'grade': 50}
+    course=course, question_text='Is Django a Python web framework?', defaults={'grade': 50}
 )
-Choice.objects.get_or_create(question=question, content='Yes', defaults={'is_correct': True})
-Choice.objects.get_or_create(question=question, content='No', defaults={'is_correct': False})
+Choice.objects.get_or_create(question=question, choice_text='Yes', defaults={'is_correct': True})
+Choice.objects.get_or_create(question=question, choice_text='No', defaults={'is_correct': False})
 question, _ = Question.objects.get_or_create(
-    course=course, content='Which parts belong to a Django application?', defaults={'grade': 50}
+    course=course, question_text='Which parts belong to a Django application?', defaults={'grade': 50}
 )
-Choice.objects.get_or_create(question=question, content='Models', defaults={'is_correct': True})
-Choice.objects.get_or_create(question=question, content='Views', defaults={'is_correct': True})
-Choice.objects.get_or_create(question=question, content='Spreadsheet macros', defaults={'is_correct': False})
+Choice.objects.get_or_create(question=question, choice_text='Models', defaults={'is_correct': True})
+Choice.objects.get_or_create(question=question, choice_text='Views', defaults={'is_correct': True})
+Choice.objects.get_or_create(question=question, choice_text='Spreadsheet macros', defaults={'is_correct': False})
 
 print('Local admin username: admin')
 print(f'Temporary password: {password}')

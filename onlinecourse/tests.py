@@ -10,10 +10,10 @@ class ExamFlowTests(TestCase):
         self.user = User.objects.create_user('learner')
         self.course = Course.objects.create(name='Learning Django', description='Demo')
         Enrollment.objects.create(user=self.user, course=self.course)
-        self.question = Question.objects.create(course=self.course, content='Select both correct answers', grade=100)
-        self.correct_a = Choice.objects.create(question=self.question, content='A', is_correct=True)
-        self.correct_b = Choice.objects.create(question=self.question, content='B', is_correct=True)
-        self.wrong = Choice.objects.create(question=self.question, content='C')
+        self.question = Question.objects.create(course=self.course, question_text='Select both correct answers', grade=100)
+        self.correct_a = Choice.objects.create(question=self.question, choice_text='A', is_correct=True)
+        self.correct_b = Choice.objects.create(question=self.question, choice_text='B', is_correct=True)
+        self.wrong = Choice.objects.create(question=self.question, choice_text='C')
         self.client.force_login(self.user)
 
     def test_correct_multiselect_submission_passes(self):
@@ -38,8 +38,8 @@ class ExamFlowTests(TestCase):
 
     def test_choice_from_another_course_is_rejected(self):
         another = Course.objects.create(name='Another course', description='Demo')
-        question = Question.objects.create(course=another, content='Other')
-        other_choice = Choice.objects.create(question=question, content='Other answer')
+        question = Question.objects.create(course=another, question_text='Other')
+        other_choice = Choice.objects.create(question=question, choice_text='Other answer')
         response = self.client.post(reverse('onlinecourse:submit', args=[self.course.id]), {
             f'choice_{other_choice.id}': other_choice.id,
         })
@@ -50,6 +50,16 @@ class ExamFlowTests(TestCase):
         submission = Submission.objects.create(enrollment=Enrollment.objects.get(user=self.user))
         other_user = User.objects.create_user('another')
         self.client.force_login(other_user)
-        response = self.client.get(reverse('onlinecourse:exam_result',
+        response = self.client.get(reverse('onlinecourse:show_exam_result',
                                            args=[self.course.id, submission.id]))
         self.assertEqual(response.status_code, 404)
+
+    def test_course_detail_and_named_result_route(self):
+        response = self.client.get(reverse('onlinecourse:course_details', args=[self.course.id]))
+        self.assertContains(response, 'Select both correct answers')
+        self.assertContains(response, 'A')
+        submission = Submission.objects.create(enrollment=Enrollment.objects.get(user=self.user))
+        self.assertIn('learner', str(submission))
+        result = self.client.get(reverse('onlinecourse:show_exam_result',
+                                         args=[self.course.id, submission.id]))
+        self.assertEqual(result.status_code, 200)

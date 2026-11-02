@@ -18,6 +18,8 @@ urlpatterns = [
     path('<int:course_id>/enroll/', views.enroll, name='enroll'),
 
     path('<int:course_id>/submit/', views.submit, name='submit'),
+    path('<int:course_id>/submission/<int:submission_id>/result/',
+         views.show_exam_result, name='show_exam_result'),
     path('course/<int:course_id>/submission/<int:submission_id>/result/',
          views.show_exam_result, name='exam_result'),
 

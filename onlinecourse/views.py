@@ -129,7 +129,7 @@ def submit(request, course_id):
                        'error': 'Invalid answer selection.'}, status=400)
     submission = Submission.objects.create(enrollment=enrollment)
     submission.choices.set(valid_ids)
-    return HttpResponseRedirect(reverse('onlinecourse:exam_result',
+    return HttpResponseRedirect(reverse('onlinecourse:show_exam_result',
                                         args=(course_id, submission.id)))
 
 
